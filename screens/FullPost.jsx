@@ -1,5 +1,8 @@
+import axios from "axios";
 import React from "react";
+import { View } from "react-native";
 import styled from "styled-components";
+import { Loading } from "../components/Loading";
 
 const PostImage = styled.Image`
   border-radius: 10px;
@@ -14,22 +17,44 @@ const PostText = styled.Text`
 `;
 
 export const FullPostScreen = () => {
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [data, setData] = React.useState([]);
+
+  React.useEffect(() => {
+    setIsLoading(true);
+    axios
+      .get("https://6645b419b8925626f892c883.mockapi.io/project6/articles/1")
+      .then(({ data }) => {
+        setData(data);
+      })
+      .catch((err) => {
+        console.log(err);
+        Alert.alert(
+          "Something went wrong...",
+          "Error while fetching data from the selected article."
+        );
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }, []);
+
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Loading />
+      </View>
+    );
+  }
+
   return (
-    <>
+    <View style={{ padding: 20 }}>
       <PostImage
         source={{
-          uri: "https://www.mtu.edu/computing/cybersecurity/images/what-is-cybersecurity-banner1600.jpg",
+          uri: data.imageUrl,
         }}
       />
-      <PostText>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-        commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-        velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
-        occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-        mollit anim id est laborum.
-      </PostText>
-    </>
+      <PostText>{data.text}</PostText>
+    </View>
   );
 };
