@@ -1,19 +1,16 @@
 import axios from "axios";
 import React from "react";
 import {
-  StatusBar,
   Alert,
   FlatList,
   View,
-  Text,
-  ActivityIndicator,
   RefreshControl,
   TouchableOpacity,
 } from "react-native";
 import { Post } from "../components/Post.jsx";
 import { Loading } from "../components/Loading.jsx";
 
-export const HomeScreen = () => {
+export const HomeScreen = ({ navigation }) => {
   const [isLoading, setIsLoading] = React.useState(true);
   const [items, setItems] = React.useState([]);
 
@@ -55,7 +52,12 @@ export const HomeScreen = () => {
         data={items}
         renderItem={({ item }) => (
           <TouchableOpacity
-            onPress={() => Alert.alert("Confirm", "You have touched.")}
+            onPress={() =>
+              navigation.navigate("FullPost", {
+                id: item.id,
+                title: item.title,
+              })
+            }
           >
             <Post
               title={item.title}
